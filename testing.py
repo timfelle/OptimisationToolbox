@@ -31,7 +31,11 @@ QP.add_constraints(In_A=A2,In_b=b2)
 
 QP.print()
 
-QP.display(x_lim=[-0.5,5], y_lim=[-0.5,3], obj_levels=50, display=True)
+QP.display(x_lim=[-0.5,5], y_lim=[-0.5,3], obj_levels=50)
+
+optimisation.solver_KKT(QP)
+
+exit()
 
 print(sep)
 # =============================================================================
