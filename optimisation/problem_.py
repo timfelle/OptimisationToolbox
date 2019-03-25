@@ -98,7 +98,7 @@ class Problem:
     def solve(self):
         if 'QP' in self.type:
             x_opt, f_opt = QP_solver(self)
-        else :
+        else:
             print("Solve is not supported")
         
         self.x_opt = x_opt
