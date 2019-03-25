@@ -9,15 +9,15 @@ from .problem_ import Problem
 
 class QP(Problem):
     def __init__(self, H, g=[], **kwargs):
+        Problem.__init__(self, **kwargs)
         if g == []: g = np.matrix(np.zeros(H.shape[0])).T
-
+        
         # Setup the class fields
         self.type   = 'QP'
         self.dim    = H.shape[0]
         self.H      = H
         self.g      = g
         
-        Problem.__init__(self, **kwargs)
         self._check_class()
 
     def f(self,x):

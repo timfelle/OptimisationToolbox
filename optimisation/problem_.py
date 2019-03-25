@@ -9,24 +9,32 @@ The following functions have been defined for the class.
 import sys
 import numpy as np
 from .display import display as disp
+from .solver_QP import QP_solver
 
 class Problem:
     def __init__(self,
         In_A=[], In_b=[],
         Eq_A=[], Eq_b=[]
         ):
-
+        
         if In_A == []:  In_A = np.matrix(In_A).T
         if In_b == []:  In_b = np.matrix(In_b).T
         if Eq_A == []:  Eq_A = np.matrix(Eq_A).T
         if Eq_b == []:  Eq_b = np.matrix(Eq_b).T
-
+        
         # Setup the class fields
         self.In_A   = In_A
         self.In_b   = In_b 
         self.Eq_A   = Eq_A
         self.Eq_b   = Eq_b
-        if self.dim == []: self.dim = 0
+
+        self.dim = None
+        self.type = ''
+        self.x_opt = []
+        self.f_opt = []
+
+        self.x_step= []
+
 
     # =========================================================================
     def set_field(self,In_A=[], In_b=[], Eq_A=[], Eq_b=[]):
@@ -87,6 +95,16 @@ class Problem:
         self._check_class()
 
     # =========================================================================
+    def solve(self):
+        if 'QP' in self.type:
+            x_opt, f_opt = QP_solver(self)
+        else :
+            print("Solve is not supported")
+        
+        self.x_opt = x_opt
+        self.f_opt = f_opt
+        
+    # =========================================================================
     def _check_class(self):
         err = ''
         # _____________________________________________________________________
@@ -144,12 +162,22 @@ class Problem:
         Eq_b_string = ''
         for i in range(0,self.Eq_b.shape[0]):
             Eq_b_string += '   %5.2f \n' % self.Eq_b[i]
+
+        # Solution string
+        Sol_str = ''
+        if len(self.x_opt) > 0:
+            Sol_str = 'Solution with value %.2f ' % self.f_opt
+            Sol_str += 'have been found at the point:\n'
+            for x in self.x_opt:
+                Sol_str += '   %5.2f\n' % x
+
         
         string += '\nAnd constraints defined by,\n'
         string += 'Eq_A:\n' + Eq_A_string
         string += 'Eq_b:\n' + Eq_b_string
         string += 'In_A:\n' + In_A_string
         string += 'In_b:\n' + In_b_string
+        string += Sol_str
         return string
         
     def display(self, **kwargs):

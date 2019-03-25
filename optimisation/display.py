@@ -32,10 +32,12 @@ class display:
         self.F,_ = plt.subplots()
 
         # Draw the objective function
-        self.contour(problem)
-
-        # Draw constraints
+        self.draw_contour(problem)
         self.draw_constraints(problem)
+
+        # Draw solution of problem have been solved
+        if len(problem.x_opt) > 0:
+            self.draw_solution(problem)
 
 
         ax = self.F.axes[0] 
@@ -52,7 +54,7 @@ class display:
 
     # =========================================================================
     # Contour plots
-    def contour(self,problem):
+    def draw_contour(self,problem):
 
         levels  = self.obj_levels
         x_lim   = self.x_lim
@@ -147,6 +149,11 @@ class display:
                     color = 'black',
                     linewidth = 2,zorder=2)
 
+
+    def draw_solution(self,problem):
+        ax = self.F.axes[0]
+        ax.plot(problem.x_opt[0],problem.x_opt[1],'r*',markersize=10, zorder=5)
+    
     # =========================================================================
     # Export and other utilities
     

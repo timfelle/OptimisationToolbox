@@ -5,7 +5,7 @@ sep = '========================================================================'
 
 # Define the matrices used in all
 
-H = np.matrix([[ -2, 2 ],[2,2]])
+H = np.matrix([[ 2, 0 ],[0,2]])
 g = np.matrix( [-2, -5 ] ).T
 
 Eq_A = np.matrix([[ 1, 2]]).T
@@ -25,18 +25,19 @@ QP = optimisation.QP(
     In_A = In_A, In_b = In_b
     )
 
-QP.help()
+#QP.help()
 
 QP.add_constraints(In_A=A2,In_b=b2)
 
 QP.print()
 
-QP.display(x_lim=[-0.5,5], y_lim=[-0.5,3], obj_levels=50)
 
-optimisation.solver_KKT(QP)
+QP.solve()
+
+QP.print()
+QP.display(x_lim=[-0.5,5], y_lim=[-0.5,3], obj_levels=50, display=True)
 
 exit()
-
 print(sep)
 # =============================================================================
 # Setting up and testing functions related to LP
