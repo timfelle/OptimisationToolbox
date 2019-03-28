@@ -1,7 +1,8 @@
 '''
     min: x' H x + g' x,
      st. Eq_A' x  = Eq_b,
-         In_A' x >= In_b.
+         In_A' x >= In_b,
+         In_C(x) >= 0.
 '''
 import sys
 import numpy as np
@@ -21,8 +22,12 @@ class QP(Problem):
         self._check_class()
 
     def f(self,x):
-        x = np.matrix( x ).T
+        if not isinstance(x, np.matrix): x = np.matrix( x ).T
         return 0.5*x.T*self.H*x + self.g.T * x
+
+    def Df(self,x):
+        if not isinstance(x, np.matrix): x = np.matrix( x ).T
+        return self.H*x + self.g
 
     # =========================================================================
     def set_field(self, H=[], g=[], **kwargs):

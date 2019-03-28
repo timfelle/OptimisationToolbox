@@ -4,6 +4,7 @@ Class used to visualize the optimisation problems.
 
 import os, sys
 import numpy as np
+import matplotlib
 import matplotlib.figure as fig
 import matplotlib.pyplot as plt
 import fillplots as fill
@@ -38,6 +39,9 @@ class display:
         # Draw solution of problem have been solved
         if len(problem.x_opt) > 0:
             self.draw_solution(problem)
+        
+        if len(problem.x_list) > 0:
+            self.draw_x_list(problem)
 
 
         ax = self.F.axes[0] 
@@ -46,6 +50,7 @@ class display:
         ax.set_xlabel('$x_0$')
         ax.set_ylabel('$x_1$')
         ax.set_title('Feasible region and Objective height')
+        ax.legend(loc='best')
 
 
         if display:
@@ -148,12 +153,59 @@ class display:
                 ax.plot(xx,yy, 
                     color = 'black',
                     linewidth = 2,zorder=2)
+        # _____________________________________________________________________
+        # Non-Linear Constraints
+
+        # Inequality
+        
+        levels  = 2
+        x_lim   = self.x_lim
+        y_lim   = self.y_lim
+        Nx      = 500
+        Ny      = 500
+
+        x_step = (x_lim[1]-x_lim[0]) / Nx
+        y_step = (y_lim[1]-y_lim[0]) / Ny
+
+        
+        x = np.matrix(np.arange(x_lim[0],x_lim[1],x_step)).T
+        y = np.matrix(np.arange(y_lim[0],y_lim[1],y_step)).T
+
+        X1,X2 = np.meshgrid(x,y)
+        C = np.zeros( (X1.shape[0],X2.shape[0]) )
+
+        for c in problem.In_C:
+            for i in range(x.shape[0]):
+                for j in range(y.shape[0]):
+                    X = np.matrix([X1[i,j],X2[i,j]]).T
+                    if not c(X) > 0:
+                        C[i,j] = 1
+
+        ax = self.F.axes[0]
+        cmap,norm=matplotlib.colors.from_levels_and_colors([0,1],['white'])
+        ax.contourf(X1,X2,C,levels, cmap=cmap,norm=norm,zorder=0.5,alpha=0.2)
+
 
 
     def draw_solution(self,problem):
         ax = self.F.axes[0]
-        ax.plot(problem.x_opt[0],problem.x_opt[1],'r*',markersize=10, zorder=5)
+        ax.plot(problem.x_opt[0],problem.x_opt[1],'r*',markersize=10, zorder=5,
+            label='Optimal point')
     
+    def draw_x_list(self,problem):
+        ax = self.F.axes[0]
+        x_list = problem.x_list[0,:]
+        y_list = problem.x_list[1,:]
+
+
+        ax.plot(x_list[0,0],y_list[0,0],'g.',markersize=15, zorder=5,
+            label='Initial point')
+
+        ax.plot(x_list.T,y_list.T,'g.-',markersize=8, zorder=4,
+            label='Iterations')
+
+
+
     # =========================================================================
     # Export and other utilities
     

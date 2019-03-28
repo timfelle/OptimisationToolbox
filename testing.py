@@ -5,14 +5,18 @@ sep = '========================================================================'
 
 # Define the matrices used in all
 
-H = np.matrix([[ 2, 0 ],[0,2]])
-g = np.matrix( [-2, -5 ] ).T
+H = np.matrix([[ 2, 1 ],[1,2]])
+g = np.matrix( [-2, -3 ] ).T
 
 Eq_A = np.matrix([[ 1, 2]]).T
 Eq_b = np.matrix([[ 2 ]]).T
 
 In_A = np.matrix([[1,-2],[-1,-2], [-1,2], [1,0], [0,1]]).T
 In_b = np.matrix([[ -2, -6, -2, 0, 0 ]]).T
+
+In_C = [lambda x: x[0]**2 + x[1]**2 - 2,
+        lambda x: -x[0]**2 - x[1]**2 + 2.4]
+
 
 A2 = [ [1,-1], [1,1] ]
 b2 = [0,1]
@@ -22,20 +26,18 @@ print(sep)
 QP = optimisation.QP(
     H,g,
     Eq_A = Eq_A, Eq_b = Eq_b,
-    In_A = In_A, In_b = In_b
+    In_A = In_A, In_b = In_b,
+    In_C = In_C
     )
 
 #QP.help()
 
-QP.add_constraints(In_A=A2,In_b=b2)
-
-QP.print()
-
+#QP.add_constraints(In_A=A2,In_b=b2)
 
 QP.solve()
 
 QP.print()
-QP.display(x_lim=[-0.5,5], y_lim=[-0.5,3], obj_levels=50, display=True)
+QP.display(x_lim=[-0.5,5], y_lim=[-0.5,5], obj_levels=50, display=True)
 
 exit()
 print(sep)
