@@ -182,9 +182,9 @@ class display:
 
             ax = self.F.axes[0]
             cmap,norm=matplotlib.colors.from_levels_and_colors([0,1],['white'])
-            ax.contourf(X1,X2,C,2, cmap=cmap,norm=norm,zorder=0,alpha=0.2)
+            ax.contourf(X1,X2,C,2, cmap=cmap,norm=norm,zorder=1,alpha=0.2)
         
-        # Inequality
+        # Equality
         if len(problem.Eq_C) != 0:
             Nx      = 500
             Ny      = 500
@@ -203,12 +203,11 @@ class display:
                 for i in range(x.shape[0]):
                     for j in range(y.shape[0]):
                         X = np.matrix([X1[i,j],X2[i,j]]).T
-                        if not abs(c(X)) > 0.5:
+                        if not c(X) > 0:
                             C[i,j] = 1
 
-            ax = self.F.axes[0]
             cmap,norm=matplotlib.colors.from_levels_and_colors([0,1],['black'])
-            ax.contour(X1,X2,C,2, cmap=cmap,norm=norm,zorder=0)
+            ax.contour(X1,X2,C,1, cmap=cmap,norm=norm,zorder=2)
 
 
 
