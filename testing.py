@@ -14,8 +14,8 @@ Eq_b = np.matrix([[ 2 ]]).T
 In_A = np.matrix([[1,-2],[-1,-2], [-1,2], [1,0], [0,1]]).T
 In_b = np.matrix([[ -2, -6, -2, 0, 0 ]]).T
 
-In_C = [lambda x: x[0]**2 + x[1]**2 - 2,
-        lambda x: -x[0]**2 - x[1]**2 + 2.4]
+In_C = [lambda x: x[0]**2 + x[1]**2 - 1,
+        lambda x: -x[0]**2 - x[1]**2 + (1.5)**2]
 
 
 A2 = [ [1,-1], [1,1] ]
@@ -27,8 +27,8 @@ QP = optimisation.QP(
     H,g,
     Eq_A = Eq_A, Eq_b = Eq_b,
 #    In_A = In_A, In_b = In_b,
-#    In_C = In_C
-    Eq_C=In_C
+#    In_C = In_C,
+#    Eq_C=In_C
     )
 
 #QP.help()
