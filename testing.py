@@ -26,8 +26,9 @@ print(sep)
 QP = optimisation.QP(
     H,g,
     Eq_A = Eq_A, Eq_b = Eq_b,
-    In_A = In_A, In_b = In_b,
-    In_C = In_C
+#    In_A = In_A, In_b = In_b,
+#    In_C = In_C
+    Eq_C=In_C
     )
 
 #QP.help()
@@ -37,7 +38,7 @@ QP = optimisation.QP(
 QP.solve()
 
 QP.print()
-QP.display(x_lim=[-0.5,5], y_lim=[-0.5,5], obj_levels=50, display=True)
+QP.display(x_lim=[-0.5,4], y_lim=[-0.5,4], obj_levels=50, display=True)
 
 exit()
 print(sep)
