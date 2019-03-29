@@ -4,7 +4,7 @@ KKT Based QP solver
 
 import sys
 import numpy as np
-from .Solvers.NLP_linesearch import backTrackingLineSearch
+from .Solvers.NLP import *
 
 
 # =============================================================================

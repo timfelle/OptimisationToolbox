@@ -4,7 +4,8 @@ KKT Based QP solver
 
 import sys
 import numpy as np
-from .Solvers.QP_equality_LDL import equality_LDL
+
+from .Solvers.QP import *
 
 # =============================================================================
 # Main function

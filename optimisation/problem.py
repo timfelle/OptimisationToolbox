@@ -10,6 +10,7 @@ import sys
 import numpy as np
 from .display import display as disp
 from .solver import solver
+import inspect
 
 class Problem:
     def __init__(self,
@@ -144,8 +145,10 @@ class Problem:
 
     def print(self):
 
-        N_eq = len(self.Eq_b)
-        N_in = len(self.In_b)
+        N_eq_L = len(self.Eq_b)
+        N_in_L = len(self.In_b)
+        N_eq_N = len(self.Eq_C)
+        N_in_N = len(self.In_C)
 
         string = ''
         
@@ -174,8 +177,19 @@ class Problem:
         
         # Setup the In_b vector
         In_b_string = ''
-        for i in range(0,self.In_b.shape[0]):
+        for i in range(0,N_in_L):
             In_b_string += '   %5.2f \n' % self.In_b[i]
+        
+
+        # Setup the non linear equality constraints
+        Eq_C_string = ''
+        if N_eq_N:
+            Eq_C_string += inspect.getsource(self.Eq_C[0])
+
+        # Setup the non linear inequality constraints
+        In_C_string = ''
+        if N_in_N:
+            In_C_string += inspect.getsource(self.In_C[0])
 
         # Solution string
         Sol_str = ''
@@ -187,10 +201,12 @@ class Problem:
 
         
         string += '\nAnd constraints defined by,\n'
-        if N_eq: string += 'Eq_A:\n' + Eq_A_string
-        if N_eq: string += 'Eq_b:\n' + Eq_b_string
-        if N_in: string += 'In_A:\n' + In_A_string
-        if N_in: string += 'In_b:\n' + In_b_string
+        if N_eq_L: string += 'Eq_A:\n' + Eq_A_string
+        if N_eq_L: string += 'Eq_b:\n' + Eq_b_string
+        if N_in_L: string += 'In_A:\n' + In_A_string
+        if N_in_L: string += 'In_b:\n' + In_b_string
+        if N_eq_N: string += 'Eq_C:\n' + Eq_C_string
+        if N_in_N: string += 'In_C:\n' + In_C_string
         string += Sol_str
         return string
         
