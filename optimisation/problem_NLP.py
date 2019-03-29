@@ -6,7 +6,7 @@
 import sys
 import numpy as np
 import inspect
-from .problem_ import Problem
+from .problem import Problem
 
 class NLP(Problem):
     def __init__(self, f, dim, **kwargs ):

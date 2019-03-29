@@ -6,7 +6,7 @@
 '''
 import sys
 import numpy as np
-from .problem_ import Problem
+from .problem import Problem
 
 class QP(Problem):
     def __init__(self, H, g=[], **kwargs):

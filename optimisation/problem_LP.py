@@ -5,7 +5,7 @@
 '''
 import sys
 import numpy as np
-from .problem_ import Problem
+from .problem import Problem
 
 class LP(Problem):
     def __init__(self, g, **kwargs):
