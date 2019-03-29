@@ -50,7 +50,9 @@ class display:
         ax.set_xlabel('$x_0$')
         ax.set_ylabel('$x_1$')
         ax.set_title('Feasible region and Objective height')
-        ax.legend(loc='best')
+        
+        if len(problem.x_opt) > 0:
+            ax.legend(loc='best')
 
 
         if display:
@@ -134,7 +136,7 @@ class display:
                     else: orientation = 0
 
                     ax.fill_between(xx,yy,y_lim[orientation],
-                        color='gray',alpha=0.4,zorder=0)
+                        color='gray',alpha=0.4,zorder=1)
 
         # Equality constraints
         if problem.Eq_A.size != 0:
@@ -157,33 +159,56 @@ class display:
         # Non-Linear Constraints
 
         # Inequality
+        if len(problem.In_C) != 0:
+            Nx      = 500
+            Ny      = 500
+
+            x_step = (x_lim[1]-x_lim[0]) / Nx
+            y_step = (y_lim[1]-y_lim[0]) / Ny
+
+            
+            x = np.matrix(np.arange(x_lim[0],x_lim[1],x_step)).T
+            y = np.matrix(np.arange(y_lim[0],y_lim[1],y_step)).T
+
+            X1,X2 = np.meshgrid(x,y)
+            C = np.zeros( (X1.shape[0],X2.shape[0]) )
+
+            for c in problem.In_C:
+                for i in range(x.shape[0]):
+                    for j in range(y.shape[0]):
+                        X = np.matrix([X1[i,j],X2[i,j]]).T
+                        if not c(X) > 0:
+                            C[i,j] = 1
+
+            ax = self.F.axes[0]
+            cmap,norm=matplotlib.colors.from_levels_and_colors([0,1],['white'])
+            ax.contourf(X1,X2,C,2, cmap=cmap,norm=norm,zorder=0,alpha=0.2)
         
-        levels  = 2
-        x_lim   = self.x_lim
-        y_lim   = self.y_lim
-        Nx      = 500
-        Ny      = 500
+        # Inequality
+        if len(problem.Eq_C) != 0:
+            Nx      = 500
+            Ny      = 500
 
-        x_step = (x_lim[1]-x_lim[0]) / Nx
-        y_step = (y_lim[1]-y_lim[0]) / Ny
+            x_step = (x_lim[1]-x_lim[0]) / Nx
+            y_step = (y_lim[1]-y_lim[0]) / Ny
 
-        
-        x = np.matrix(np.arange(x_lim[0],x_lim[1],x_step)).T
-        y = np.matrix(np.arange(y_lim[0],y_lim[1],y_step)).T
+            
+            x = np.matrix(np.arange(x_lim[0],x_lim[1],x_step)).T
+            y = np.matrix(np.arange(y_lim[0],y_lim[1],y_step)).T
 
-        X1,X2 = np.meshgrid(x,y)
-        C = np.zeros( (X1.shape[0],X2.shape[0]) )
+            X1,X2 = np.meshgrid(x,y)
+            C = np.zeros( (X1.shape[0],X2.shape[0]) )
 
-        for c in problem.In_C:
-            for i in range(x.shape[0]):
-                for j in range(y.shape[0]):
-                    X = np.matrix([X1[i,j],X2[i,j]]).T
-                    if not c(X) > 0:
-                        C[i,j] = 1
+            for c in problem.Eq_C:
+                for i in range(x.shape[0]):
+                    for j in range(y.shape[0]):
+                        X = np.matrix([X1[i,j],X2[i,j]]).T
+                        if not abs(c(X)) > 0.5:
+                            C[i,j] = 1
 
-        ax = self.F.axes[0]
-        cmap,norm=matplotlib.colors.from_levels_and_colors([0,1],['white'])
-        ax.contourf(X1,X2,C,levels, cmap=cmap,norm=norm,zorder=0.5,alpha=0.2)
+            ax = self.F.axes[0]
+            cmap,norm=matplotlib.colors.from_levels_and_colors([0,1],['black'])
+            ax.contour(X1,X2,C,2, cmap=cmap,norm=norm,zorder=0)
 
 
 
