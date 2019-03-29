@@ -2,6 +2,7 @@
     min: x' H x + g' x,
      st. Eq_A' x  = Eq_b,
          In_A' x >= In_b,
+         Eq_C(x)  = 0,
          In_C(x) >= 0.
 '''
 import sys

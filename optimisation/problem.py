@@ -13,25 +13,25 @@ from .solver import solver
 
 class Problem:
     def __init__(self,
-        In_A=[], In_b=[],
         Eq_A=[], Eq_b=[],
-        In_C=[], Eq_C=[]
+        In_A=[], In_b=[],
+        Eq_C=[], In_C=[]
         ):
         
         if not isinstance(Eq_A, np.matrix): Eq_A = np.matrix(Eq_A).T
         if not isinstance(Eq_b, np.matrix): Eq_b = np.matrix(Eq_b).T
         if not isinstance(In_A, np.matrix): In_A = np.matrix(In_A).T
         if not isinstance(In_b, np.matrix): In_b = np.matrix(In_b).T
-        if not isinstance(In_C, list)     : In_C = [In_C]
         if not isinstance(Eq_C, list)     : Eq_C = [Eq_C]
+        if not isinstance(In_C, list)     : In_C = [In_C]
         
-        # Setup the class fields
-        self.In_A   = In_A
-        self.In_b   = In_b 
+        # Setup the class fields 
         self.Eq_A   = Eq_A
         self.Eq_b   = Eq_b
-        self.In_C   = In_C
+        self.In_A   = In_A
+        self.In_b   = In_b
         self.Eq_C   = Eq_C
+        self.In_C   = In_C
 
         self.dim = None
         self.type   = ''
@@ -41,21 +41,21 @@ class Problem:
 
 
     # =========================================================================
-    def set_field(self,In_A=[], In_b=[], Eq_A=[], Eq_b=[]):
+    def set_field(self, Eq_A=[], Eq_b=[], In_A=[], In_b=[]):
 
         if not isinstance(Eq_A, np.matrix): Eq_A = np.matrix(Eq_A).T
         if not isinstance(Eq_b, np.matrix): Eq_b = np.matrix(Eq_b).T
         if not isinstance(In_A, np.matrix): In_A = np.matrix(In_A).T
         if not isinstance(In_b, np.matrix): In_b = np.matrix(In_b).T
-
-        if In_A.size: self.In_A = In_A
-        if In_b.size: self.In_b = In_b
+        
         if Eq_A.size: self.Eq_A = Eq_A
         if Eq_b.size: self.Eq_b = Eq_b
+        if In_A.size: self.In_A = In_A
+        if In_b.size: self.In_b = In_b
 
         self._check_class()
 
-    def add_constraints(self,In_A=[],In_b=[],Eq_A=[],Eq_b=[]):
+    def add_constraints(self,Eq_A=[],Eq_b=[],In_A=[],In_b=[]):
         # Addition of constraints to the system.
 
         if not isinstance(Eq_A, np.matrix): Eq_A = np.matrix(Eq_A).T
@@ -65,13 +65,6 @@ class Problem:
 
         # _____________________________________________________________________
         # Ensure inputs match the necessary sizes.
-        if ( In_A.size != 0 and In_A.shape[0] != self.dim ):
-            print('Error in add_constraints',file=sys.stderr)
-            print('  In_A must comply with problem dimension. In_A: %d, Dim: %d' 
-                %(In_A.shape[0],self.dim),
-                file=sys.stderr)
-            exit()
-
         if ( Eq_A.size != 0 and Eq_A.shape[0] != self.dim ):
             print('Error in add_constraints',file=sys.stderr)
             print('  Eq_A must comply with problem dimension. Eq_A: %d, Dim: %d' 
@@ -79,15 +72,22 @@ class Problem:
                 file=sys.stderr)
             exit()
 
-        if In_A.size != 0 and In_A.shape[1] != len(In_b):
+        if ( In_A.size != 0 and In_A.shape[0] != self.dim ):
             print('Error in add_constraints',file=sys.stderr)
-            print('  In_A and In_b must match.',file=sys.stderr)
+            print('  In_A must comply with problem dimension. In_A: %d, Dim: %d' 
+                %(In_A.shape[0],self.dim),
+                file=sys.stderr)
             exit()
+
         if Eq_A.size != 0 and Eq_A.shape[1] != len(Eq_b):
             print('Error in add_constraints',file=sys.stderr)
             print('  Eq_A and Eq_b must match.',file=sys.stderr)
             exit()
 
+        if In_A.size != 0 and In_A.shape[1] != len(In_b):
+            print('Error in add_constraints',file=sys.stderr)
+            print('  In_A and In_b must match.',file=sys.stderr)
+            exit()
 
         # _____________________________________________________________________
         # Place constraints in the data structure
@@ -118,15 +118,7 @@ class Problem:
         err = ''
         # _____________________________________________________________________
         # Check for Errors
-        
-        if self.In_A.shape[0] != self.dim and self.In_A.size != 0:
-            err+= 'File, input error\n'
-            err+= '  In_A must be of shape (%d,N).\n' % self.dim
 
-        if self.In_b.shape[0] != self.In_A.shape[1] and self.In_b.size != 0:
-            err+= 'File, input error\n'
-            err+= '  In_b must match In_A, (%d,1).\n' % self.In_A.shape[1]
-                
         if self.Eq_A.shape[0] != self.dim and self.Eq_A.size != 0:
             err+= 'File, input error\n'
             err+= '  Eq_A must be of shape (%d,N).\n' % self.dim
@@ -134,6 +126,14 @@ class Problem:
         if self.Eq_b.shape[0] != self.Eq_A.shape[1] and self.Eq_b.size != 0:
             err+= 'File, input error\n'
             err+= '  Eq_b must match Eq_A, (%d,1).\n' % self.Eq_A.shape[1]
+
+        if self.In_A.shape[0] != self.dim and self.In_A.size != 0:
+            err+= 'File, input error\n'
+            err+= '  In_A must be of shape (%d,N).\n' % self.dim
+
+        if self.In_b.shape[0] != self.In_A.shape[1] and self.In_b.size != 0:
+            err+= 'File, input error\n'
+            err+= '  In_b must match In_A, (%d,1).\n' % self.In_A.shape[1]
 
         if err != '':
             print( err ,file=sys.stderr)
@@ -148,21 +148,8 @@ class Problem:
         N_in = len(self.In_b)
 
         string = ''
-        # Setup the In_A matrix
-        In_A_string = ''
-        for i in range(0,self.In_A.shape[0]):
-            In_A_string += '   '
-            for j in range(0,self.In_A.shape[1]):
-                In_A_string += '%5.2f ' % self.In_A[i,j]
-            if i != self.In_A.shape[0]:
-                In_A_string += '\n'
         
-        # Setup the In_b vector
-        In_b_string = ''
-        for i in range(0,self.In_b.shape[0]):
-            In_b_string += '   %5.2f \n' % self.In_b[i]
-        
-        # Setup the H matrix
+        # Setup string for Equality A
         Eq_A_string = ''
         for i in range(0,self.Eq_A.shape[0]):
             Eq_A_string += '   '
@@ -176,10 +163,24 @@ class Problem:
         for i in range(0,self.Eq_b.shape[0]):
             Eq_b_string += '   %5.2f \n' % self.Eq_b[i]
 
+        # Setup the In_A matrix
+        In_A_string = ''
+        for i in range(0,self.In_A.shape[0]):
+            In_A_string += '   '
+            for j in range(0,self.In_A.shape[1]):
+                In_A_string += '%5.2f ' % self.In_A[i,j]
+            if i != self.In_A.shape[0]:
+                In_A_string += '\n'
+        
+        # Setup the In_b vector
+        In_b_string = ''
+        for i in range(0,self.In_b.shape[0]):
+            In_b_string += '   %5.2f \n' % self.In_b[i]
+
         # Solution string
         Sol_str = ''
         if len(self.x_opt) > 0:
-            Sol_str = 'Solution with value %.2f ' % self.f_opt
+            Sol_str = '\nSolution with value %.2f ' % self.f_opt
             Sol_str += 'have been found at the point:\n'
             for x in self.x_opt:
                 Sol_str += '   %5.2f\n' % x
