@@ -9,13 +9,13 @@ The following functions have been defined for the class.
 import sys
 import numpy as np
 from .display import display as disp
-from .solver_QP import QP_solver
+from .solver import solver
 
 class Problem:
     def __init__(self,
         In_A=[], In_b=[],
         Eq_A=[], Eq_b=[],
-        In_C=[]
+        In_C=[], Eq_C=[]
         ):
         
         if not isinstance(Eq_A, np.matrix): Eq_A = np.matrix(Eq_A).T
@@ -23,6 +23,7 @@ class Problem:
         if not isinstance(In_A, np.matrix): In_A = np.matrix(In_A).T
         if not isinstance(In_b, np.matrix): In_b = np.matrix(In_b).T
         if not isinstance(In_C, list)     : In_C = [In_C]
+        if not isinstance(Eq_C, list)     : Eq_C = [Eq_C]
         
         # Setup the class fields
         self.In_A   = In_A
@@ -30,6 +31,7 @@ class Problem:
         self.Eq_A   = Eq_A
         self.Eq_b   = Eq_b
         self.In_C   = In_C
+        self.Eq_C   = Eq_C
 
         self.dim = None
         self.type   = ''
@@ -107,11 +109,7 @@ class Problem:
 
     # =========================================================================
     def solve(self):
-        if 'QP' in self.type:
-            x_opt, f_opt = QP_solver(self)
-        else:
-            print("Solve is not supported")
-        
+        x_opt, f_opt = solver(self)
         self.x_opt = x_opt
         self.f_opt = f_opt
         
