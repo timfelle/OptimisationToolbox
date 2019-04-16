@@ -42,27 +42,33 @@ class Problem:
 
 
     # =========================================================================
-    def set_field(self, Eq_A=[], Eq_b=[], In_A=[], In_b=[]):
+    def set_field(self, Eq_A=[], Eq_b=[], In_A=[], In_b=[], Eq_C=[], In_C=[]):
 
         if not isinstance(Eq_A, np.matrix): Eq_A = np.matrix(Eq_A).T
         if not isinstance(Eq_b, np.matrix): Eq_b = np.matrix(Eq_b).T
         if not isinstance(In_A, np.matrix): In_A = np.matrix(In_A).T
         if not isinstance(In_b, np.matrix): In_b = np.matrix(In_b).T
+        if not isinstance(Eq_C, list)     : Eq_C = [Eq_C]
+        if not isinstance(In_C, list)     : In_C = [In_C]
         
         if Eq_A.size: self.Eq_A = Eq_A
         if Eq_b.size: self.Eq_b = Eq_b
         if In_A.size: self.In_A = In_A
         if In_b.size: self.In_b = In_b
+        if Eq_C.size: self.Eq_C = Eq_C
+        if In_C.size: self.In_C = In_C
 
         self._check_class()
 
-    def add_constraints(self,Eq_A=[],Eq_b=[],In_A=[],In_b=[]):
+    def add_constraints(self,Eq_A=[],Eq_b=[],In_A=[],In_b=[],Eq_C=[],In_C=[]):
         # Addition of constraints to the system.
 
         if not isinstance(Eq_A, np.matrix): Eq_A = np.matrix(Eq_A).T
         if not isinstance(Eq_b, np.matrix): Eq_b = np.matrix(Eq_b).T
         if not isinstance(In_A, np.matrix): In_A = np.matrix(In_A).T
         if not isinstance(In_b, np.matrix): In_b = np.matrix(In_b).T
+        if not isinstance(Eq_C, list)     : Eq_C = [Eq_C]
+        if not isinstance(In_C, list)     : In_C = [In_C]
 
         # _____________________________________________________________________
         # Ensure inputs match the necessary sizes.
@@ -104,6 +110,16 @@ class Problem:
         elif In_A.size != 0:
             self.In_A = np.hstack([ self.In_A,In_A ])
             self.In_b = np.vstack([ self.In_b,In_b ])
+        
+        if self.Eq_C.size == 0 and Eq_C.size != 0:
+            self.set_field(Eq_C=Eq_C)
+        elif In_C != 0:
+            self.In_C.append(In_C)
+
+        if self.In_C.size == 0 and In_C.size != 0:
+            self.set_field(In_C=In_C)
+        elif In_C != 0:
+            self.In_C.append(In_C)
 
         # Make sure no errors have occured
         self._check_class()
@@ -184,7 +200,9 @@ class Problem:
         # Setup the non linear equality constraints
         Eq_C_string = ''
         if N_eq_N:
-            Eq_C_string += inspect.getsource(self.Eq_C[0])
+            tmp = inspect.getsource(self.Eq_C[1])
+            Eq_C_string += tmp
+
 
         # Setup the non linear inequality constraints
         In_C_string = ''

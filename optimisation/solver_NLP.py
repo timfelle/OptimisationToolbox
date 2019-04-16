@@ -1,9 +1,7 @@
 '''
-KKT Based QP solver
+Main function for solving Non Linear programs.
 '''
 
-import sys
-import numpy as np
 from .Solvers.NLP import *
 
 

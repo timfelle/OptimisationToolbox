@@ -43,7 +43,7 @@ Icon
 
 # IDE's and other programs
 .vs
-.vscode
+#.vscode
 *.code-workspace
 
 # END OF FILE

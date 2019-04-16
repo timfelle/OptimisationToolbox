@@ -1,5 +1,5 @@
 '''
-KKT Based QP solver
+Main function for solving Quadratic programs.
 '''
 
 import sys
